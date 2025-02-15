@@ -1,0 +1,245 @@
+import os
+import sys
+import json
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+import torch
+import numpy as np
+import random
+import pandas as pd
+from vllm import LLM, SamplingParams
+import pyarrow.parquet as pq
+from tqdm import tqdm
+import re
+def setup_seed(seed):
+    random.seed(seed)   # Python的随机性
+    os.environ['PYTHONHASHSEED'] = str(seed)    # 设置Python哈希种子，为了禁止hash随机化，使得实验可复现
+    np.random.seed(seed)   # numpy的随机性
+    torch.manual_seed(seed)   # torch的CPU随机性，为CPU设置随机种子
+    torch.cuda.manual_seed(seed)   # torch的GPU随机性，为当前GPU设置随机种子
+    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.   torch的GPU随机性，为所有GPU设置随机种子
+    # torch.backends.cudnn.benchmark = False   # if benchmark=True, deterministic will be False
+    # torch.backends.cudnn.deterministic = True   # 选择确定性算法
+
+setup_seed(0)
+task_prompt_dict ={
+"单项选择问答":"""请你从提供的参考资料中生成一个单项选择题帮助学生更好地掌握相关知识：
+其中单项选择题题目应该包括一个问题（question），四个选择项（options）标记位A、B、C和D，其中一个是问题的答案(answer);
+同时你还需要生成解答问题的思考步骤(thinking_steps)，以及这个问题的答案(answer)。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"多项选择问答":"""请你从提供的参考资料中生成一个多项选择题帮助学生更好地掌握相关知识：
+其中多项选择题题目应该包括一个问题（question），多个选择项（options）标记位A、B、C、D、E（以此类推），其中一个或多个是问题的答案(answer);
+同时你还需要生成解答问题的思考步骤(thinking_steps)，以及这个问题的答案(answer)。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"闭卷问答":"""请你从提供的参考资料中生成一个不需要参考文本回答的闭卷问答对帮助学生更好地掌握相关知识：
+这个问答对应该包括一个问题（question），同时你还需要生成解答问题的思考步骤(thinking_steps)，以及这个问题的答案(answer)。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"开卷问答":"""请你从提供的参考资料中生成一个可以参考用户提供的参考资料进行回答的开卷问答对帮助学生更好地掌握相关知识：
+这个问答对应该包括一个问题（question），同时你还需要生成解答问题的思考步骤(thinking_steps)，以及这个问题的答案(answer)。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"single choice question answering": """Please generate a single-choice question from the provided reference materials to help students better grasp the relevant knowledge:
+The single-choice question should include a question, four options labeled A, B, C, and D, one of which is the answer to the question;
+At the same time, you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"multi choice question answering": """Please generate a multiple-choice question from the references provided to help students better grasp the knowledge:
+The multiple-choice question should include a question with multiple options tags A, B, C, D, E (and so on), one or more of which are the answers to the questions;
+At the same time, you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"close question answering": """Please generate a closed-book question and answer pair from the provided reference materials that do not require reference text to answer to help students better grasp the relevant knowledge:
+This Q&A pair should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"open question answering": """Please generate an open-book Q&A pair from the provided reference materials to help students better grasp the relevant knowledge:
+This Q&A pair should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"data complexity evaluation": """Please score the complexity of the user's instruction to help students understand the complexity of the questions.
+There are 5 levels of complexity, which are: 1 point (Simple Question), 2 points (Basic Question), 3 points (Moderate Complexity Question), 4 points (Higher Complexity Question), 
+You'll first need to analyze the complexity of the question before grading it.
+And output in the following JSON format:
+```json
+{"analysis_steps": "xxx", "score": "xxx"}
+```
+""",
+"data quality evaluation": """Please score the quality of the user's instruction and response to help students understand the quality of the question and response.
+There are 5 levels of quality, which are: 1 point - Basic requirements met (Basic Level), 2 points - Basic requirements met with some quality (Qualified Level), \
+3 points - Good quality, meeting most requirements (Good Level), 4 points - High quality, meeting all requirements and exceeding expectations (Excellent Level), \
+5 points - Excellent quality, exceeding all requirements with professional contributions (Outstanding Level)
+You'll first need to analyze the quality of the question and response before grading it.
+And output in the following JSON format:
+```json
+{"analysis_steps": "xxx", "score": "xxx"}
+```
+""",
+"text summarization": """Please generate a concise summary Q&A pairs of the provided text to help students better understand the main points:
+The summary should capture the key ideas and essential information from the text.
+The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"text generation": """Please generate a text-generated Q&A pair based on the text provided to help students learn:
+The resulting text should be well-structured and relevant to the given text.
+The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"natural language inference": """Please generate a logical inference question from the provided reference materials to help students better grasp the relevant knowledge:
+Logical inference questions generally ask whether a judgment or piece of knowledge is correct, with answers including "yes, no, maybe" three options.
+The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"text classification": """Generate a text classification task based on the text provided to help students understand the content of the text:
+Classifications should be accurate and relevant to the given text.
+The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"文本摘要": """请根据提供的文本生成一个合理的摘要问答对，摘要应捕捉文本中的关键思想和基本信息，以帮助学生更好地理解主要观点：
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"文本生成": """请根据提供的文本生成一个文本生成问答对，以帮助学生学习相关知识并增强文本生成能力：
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"自然语言推断": """请根据提供的参考资料生成一个逻辑推断题，以帮助学生更好地掌握相关知识：
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"文本分类": """请根据提供的文本生成一个文本分类任务，以帮助学生理解文本的内容与类别：
+分类应准确且与给定的文本相关。
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+"""
+}
+zh_prompt_template = """以下是给定的参考资料：
+[参考资料开始]
+{text}
+[参考资料结束]
+请根据要求完成问答对生成。
+"""
+en_prompt_template = """Here is the provided reference material:
+[reference material begin]
+{text}
+[reference material end]
+Please complete the Q&A pair based on the requirements.
+"""
+
+def chinese_char_ratio(text):
+    # 使用正则表达式匹配中文字符
+    chinese_chars = re.findall(r'[\u4e00-\u9fff]', text)
+    
+    # 计算中文字符的数量
+    chinese_count = len(chinese_chars)
+    
+    # 计算总字符数
+    total_count = len(text)
+    
+    # 计算中文字符的占比
+    if total_count == 0:
+        return 0.0  # 如果文本为空，返回0
+    ratio = chinese_count / total_count
+    
+    return ratio
+
+model_path = sys.argv[1]
+file_path = sys.argv[2]
+output_data_path = sys.argv[3]
+
+llm = LLM(model=model_path,tensor_parallel_size=1,max_model_len=8192)
+sampling_params = SamplingParams(temperature=0.7, top_p=0.95, max_tokens=1024)
+
+with open(file_path, 'r', encoding='utf-8') as f:
+    data = json.load(f)
+# data = random.sample(data, 12000)
+results = []
+texts_with_prompts = []
+
+task_defines_en2zh = ["```json\n{\"question\": \"请你将该法条翻译成中文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将以下合同中的句子翻译为中文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将下面的一个法律术语翻译为中文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将下面的一条句子翻译为中文,并直接输出翻译结果："
+               ]
+task_defines_zh2en = ["```json\n{\"question\": \"请你将该法条翻译成英文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将以下合同中的句子翻译为英文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将下面的一个法律术语翻译为英文,并直接输出翻译结果：",
+                "```json\n{\"question\": \"请你将下面的一条句子翻译为英文,并直接输出翻译结果："
+               ]
+sampled_task_defines  = []
+for i in range(len(data)):
+    if chinese_char_ratio(data[i]["context"]) > 0.5:
+        task_define = random.sample(task_defines_zh2en, 1)[0]
+    else:
+        task_define = random.sample(task_defines_en2zh, 1)[0]
+    prompt = task_prompt_dict["闭卷问答"] + zh_prompt_template.format(text=data[i]["context"])
+    prompt = prompt + task_define
+    sampled_task_defines.append(task_define)
+    texts_with_prompts.append(prompt)
+texts_with_prompts = texts_with_prompts*2000
+texts_with_prompts = texts_with_prompts[0:20000]
+num_gens = 1
+for num_gen in range(num_gens):
+    outputs = llm.generate(texts_with_prompts, sampling_params)
+    num = -1
+    for idx in tqdm(range(len(outputs))):
+        num+=1
+        output = outputs[idx]
+        generated_text = sampled_task_defines[num] + output.outputs[0].text
+        try:
+            qa_pair = json.loads(generated_text.replace("```json","").replace("```","").strip())
+        except:
+            results.append({"context":data[num]["context"],"generated_text":generated_text})
+            continue
+        results.append({"context":data[num]["context"],"generated_text":generated_text,"qa_pair":qa_pair})
+with open(output_data_path, "w", encoding='utf-8') as f:
+    json.dump(results, f, ensure_ascii=False, indent=4)
