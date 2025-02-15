@@ -104,8 +104,6 @@ def translation_test(test_data_path, model, sampling_params):
             "prediction": pred
         })
     
-    with open(output_path, "w", encoding="utf-8") as output_file:
-        json.dump(result_data, output_file, ensure_ascii=False, indent=4)
     rouge_l = calculate_rouge_l(reference_answers, model_outputs)
     print(f"ROUGE-L score: {rouge_l}")
 
