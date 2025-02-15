@@ -1,4 +1,4 @@
-domian_task=""
+domain_task=""
 model_path=""
 unlabeled_data_path=""
 output_data_path=""
