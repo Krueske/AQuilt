@@ -2,7 +2,7 @@
 
 Overview of the proposed AQuilt framework. The left side illustrates the training process of our data synthesis model, while the right side demonstrates how the trained model automatically synthesizes high-quality domain-specific data.
 
-<img src="images/main_figure.png" alt="Alt Text" style="zoom:50%;" />
+<img src="images/main_figure.png" alt="Alt Text" style="zoom:50%;" width = "2000" />
 
 ## AQuilt Download
 
