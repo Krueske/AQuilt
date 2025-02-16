@@ -6,14 +6,11 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 ## AQuilt Download
 
-You can download the AQuilt model (Lora) from this link:[link]
-
-You can download the AQuilt-Inspection model (Lora) from this link:[link]
+You can download the AQuilt model after anonymity period from this link:[link]
 
 Notes：
 
 - AQuilt is trained based on the Qwen2.5-7B-base model. You need to merge the downloaded Lora file with Qwen2.5-7B-base to obtain the complete AQuilt model.
-- The AQuilt-Inspection model is further trained based on the AQuilt model. You need to merge the downloaded Lora file with AQuilt to obtain the complete AQuilt-Inspection model.
 
 ## Environment Setup
 
