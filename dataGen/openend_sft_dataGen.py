@@ -182,16 +182,16 @@ llm = LLM(model=model_path,tensor_parallel_size=1,max_model_len=8192)
 sampling_params = SamplingParams(temperature=0.7, top_p=0.95, max_tokens=1024)
 
 with open(file_path, 'r', encoding='utf-8') as f:
-    data1 = json.load(f)
+    data = json.load(f)
+data = data*2000
+data = data[0:20000]
 results = []
 texts_with_prompts = []
 task_define = "```json\n{\"question\": \"请分析以下论述题，详细阐述你的观点并可以引用法律条文和相关法律原则。确保你针对每个问题提供充分的论据和分析，以清晰展示你对法律问题的深刻理解和灵活应用能力:"
 for i in range(len(data)):
-    prompt = task_prompt_dict["闭卷问答"] + zh_prompt_template.format(text=data[i])
+    prompt = task_prompt_dict["开卷问答"] + zh_prompt_template.format(text=data[i])
     prompt = prompt + task_define
     texts_with_prompts.append(prompt)
-texts_with_prompts = texts_with_prompts*2000
-texts_with_prompts = texts_with_prompts[0:20000]
 num_gens = 1
 for num_gen in range(num_gens):
     outputs = llm.generate(texts_with_prompts, sampling_params)
@@ -203,8 +203,7 @@ for num_gen in range(num_gens):
         try:
             qa_pair = json.loads(generated_text.replace("```json","").replace("```","").strip())
         except:
-            results.append({"context":data[num],"generated_text":generated_text})
             continue
-        results.append({"context":data[num],"generated_text":generated_text,"qa_pair":qa_pair})
+        results.append({"context":data[num]["context"],"generated_text":generated_text,"qa_pair":qa_pair})
 with open(output_data_path, "w", encoding='utf-8') as f:
     json.dump(results, f, ensure_ascii=False, indent=4)

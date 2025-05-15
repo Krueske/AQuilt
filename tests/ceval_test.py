@@ -42,6 +42,7 @@ def extract_answer(line, gen_ans):
         r'答案([ABCD])',
         r'选择([ABCD])',
         r'答案：([ABCD])',
+        r'答案是：([ABCD])',
         r'选择答案([ABCD])',
         r'答案应该是([ABCD])',
         r'答案是选项([ABCD])',
@@ -101,12 +102,12 @@ def test(subject_name):
         in_context = ""
         data_with_prompts = []
         for i in range(len(df)):
-            if "llama3" in model_path:
+            if "llama" in model_path:
                 data_with_prompts.append(
                     """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n以下是中国关于{subject}考试的单项选择题，请选出其中的正确答案。\n\n{in_context}{question}\nA. {A}\nB. {B}\nC. {C}\nD. {D}\n答案是什么？<|eot_id|><|start_header_id|>assistant<|end_header_id|>""".format(
                         subject=subject_name, in_context=in_context, question=df.loc[i, 'question'], A=df.loc[i, 'A'],
                         B=df.loc[i, 'B'], C=df.loc[i, 'C'], D=df.loc[i, 'D']))
-            elif "qwen2" in model_path:
+            elif "qwen" in model_path:
                 data_with_prompts.append(
                     """<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n以下是中国关于{subject}考试的单项选择题，请选出其中的正确答案。\n\n{in_context}{question}\nA. {A}\nB. {B}\nC. {C}\nD. {D}\n答案是什么？<|im_end|>\n<|im_start|>assistant\n""".format(
                         subject=subject_name, in_context=in_context, question=df.loc[i, 'question'], A=df.loc[i, 'A'],

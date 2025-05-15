@@ -9,6 +9,7 @@ import os
 import json
 import string
 import pyarrow.parquet as pq
+import sys
 def setup_seed(seed):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -64,7 +65,7 @@ def calculate_rouge_l(reference_answers, model_outputs):
     return sum(scores) / len(scores) if scores else 0.0
 
 
-def openend_test(test_data_path, model, sampling_params):
+def openend_test(test_data_path, model, sampling_params, output_file):
     print("openend_test")
     test_data = []
 
@@ -90,7 +91,7 @@ def openend_test(test_data_path, model, sampling_params):
     outputs = model.generate(prompts, sampling_params)
     for output in outputs:
         try:
-                output_text = output.outputs[0].text.split("Answer:")[-1].strip()
+            output_text = output.outputs[0].text.split("Answer:")[-1].strip()
         except:
             output_text = output.outputs[0].text
         model_outputs.append(output_text)
@@ -101,12 +102,12 @@ def openend_test(test_data_path, model, sampling_params):
             "reference": ref,
             "prediction": pred
         })
-    
-
+    with open(output_file, "w", encoding="utf-8") as output_file:
+        json.dump(result_data, output_file, ensure_ascii=False, indent=4)
     rouge_l = calculate_rouge_l(reference_answers, model_outputs)
     print(f"ROUGE-L score: {rouge_l}")
 
     return rouge_l
 
-
-openend_test("./openend/test/5_4.json", llm, sampling_params)
+filename = model_path.split("/")[-1]
+openend_test("./openend/test/5_4.json", llm, sampling_params, f"./openend/results/{filename}.json")

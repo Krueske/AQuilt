@@ -1,6 +1,7 @@
 import json
 from vllm import LLM, SamplingParams
 import re
+import sys
 # 加载 vllm 模型
 model_path = sys.argv[1]
 llm = LLM(model=model_path, tensor_parallel_size=1, max_model_len=8192, gpu_memory_utilization=0.9)
@@ -14,7 +15,10 @@ def evaluate_model(model, dataset, ground_truth):
         pmid = item['pmid']
         question = item['question']
         context = item['context']
-        input_text = f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are an expert medical assistant.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nContext:\n{context}\nBased on the context above, please answer the following question:\n{question}Yes, no or maybe?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+        if "llama" in model_path.lower():
+            input_text = f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are an expert medical assistant.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nContext:\n{context}\nBased on the context above, please answer the following question:\n{question}Yes, no or maybe?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+        elif "qwen" in model_path.lower():
+            input_text = f"<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nContext:\n{context}\nBased on the context above, please answer the following question:\n{question}Yes, no or maybe?<|im_end|>\n<|im_start|>assistant\n"
         data_with_prompts.append((pmid, input_text))
     
     # Generate the answers using the model
@@ -24,7 +28,7 @@ def evaluate_model(model, dataset, ground_truth):
     for idx, output in enumerate(outputs):
         pmid = pmids[idx]
         generated_text = output.outputs[0].text
-        answer = generated_text
+        answer = generated_text.split("Answer:")[-1]
         
         results.append({
             'pmid': pmid,

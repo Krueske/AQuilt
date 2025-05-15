@@ -9,6 +9,7 @@ import os
 import json
 import string
 import pyarrow.parquet as pq
+import sys
 def setup_seed(seed):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -63,7 +64,7 @@ def calculate_rouge_l(reference_answers, model_outputs):
     return sum(scores) / len(scores) if scores else 0.0
 
 
-def translation_test(test_data_path, model, sampling_params):
+def translation_test(test_data_path, model, sampling_params, output_file):
     print("translation_test")
     test_data = []
     with open(test_data_path, "r", encoding="utf-8") as f:
@@ -89,10 +90,7 @@ def translation_test(test_data_path, model, sampling_params):
     outputs = model.generate(prompts, sampling_params)
     for output in outputs:
         try:
-            if "qw2_5" in model_path.lower():
-                output_text = output.outputs[0].text
-            else:
-                output_text = output.outputs[0].text.split("Answer:")[1].strip()
+            output_text = output.outputs[0].text.split("Answer:")[-1].strip()
         except:
             output_text = output.outputs[0].text
         model_outputs.append(output_text)
@@ -103,12 +101,13 @@ def translation_test(test_data_path, model, sampling_params):
             "reference": ref,
             "prediction": pred
         })
-    
+    with open(output_file, "w", encoding="utf-8") as output_file:
+        json.dump(result_data, output_file, ensure_ascii=False, indent=4)
     rouge_l = calculate_rouge_l(reference_answers, model_outputs)
     print(f"ROUGE-L score: {rouge_l}")
 
     return rouge_l
 
 
-
-translation_test("./translation/test/5_3.json", llm, sampling_params)
+filename = model_path.split("/")[-1]
+translation_test("./translation/test/5_3.json", llm, sampling_params, f"./translation/results/{filename}.json")

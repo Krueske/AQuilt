@@ -201,7 +201,9 @@ sampling_params = SamplingParams(temperature=0.7, top_p=0.95, max_tokens=1024)
 
 with open(file_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
-# data = random.sample(data, 12000)
+
+data = data*2000
+data = data[0:20000]
 results = []
 texts_with_prompts = []
 
@@ -225,8 +227,6 @@ for i in range(len(data)):
     prompt = prompt + task_define
     sampled_task_defines.append(task_define)
     texts_with_prompts.append(prompt)
-texts_with_prompts = texts_with_prompts*2000
-texts_with_prompts = texts_with_prompts[0:20000]
 num_gens = 1
 for num_gen in range(num_gens):
     outputs = llm.generate(texts_with_prompts, sampling_params)
@@ -238,7 +238,6 @@ for num_gen in range(num_gens):
         try:
             qa_pair = json.loads(generated_text.replace("```json","").replace("```","").strip())
         except:
-            results.append({"context":data[num]["context"],"generated_text":generated_text})
             continue
         results.append({"context":data[num]["context"],"generated_text":generated_text,"qa_pair":qa_pair})
 with open(output_data_path, "w", encoding='utf-8') as f:
