@@ -8,10 +8,6 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 You can download the AQuilt model after anonymity period from this link:[link]
 
-Notes：
-
-- AQuilt is trained based on the Qwen2.5-7B-base model. You need to merge the downloaded Lora file with Qwen2.5-7B-base to obtain the complete AQuilt model.
-
 ## Environment Setup
 
 To install all the relevant packages, run the following:
