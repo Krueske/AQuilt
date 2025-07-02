@@ -20,6 +20,12 @@ To install all the relevant packages, run the following:
 conda create -n [environment_name] --file requirements.txt
 conda activate [environment_name]
 ```
+## Quick Start
+You can directly refer to the `example_dataGen.py` file and the `example_dataEval.py` file for data synthesis and data evaluation:
+```bash
+python -u example_dataGen.py "AQuilt_path" "exampleGen.json"
+python -u example_dataEval.py "AQuilt_path" "exampleEval.json"
+```
 
 ## Data Synthesis
 
