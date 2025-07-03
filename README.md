@@ -48,14 +48,16 @@ Use the `dataEval.sh` script to evaluate data, run the following script:
 
 ```bash
 model_path=""
+eval_lora_path=""
 data_path=""
 output_datapath=""
-CUDA_VISIBLE_DEVICES=0 python -u data_eval.py $model_path $data_path > ./logs/data_eval.log 2>&1 &
+CUDA_VISIBLE_DEVICES=0 python -u data_eval.py $model_path $eval_lora_path $data_path $output_datapath > ./logs/data_eval.log 2>&1 &
 ```
 
 Options:
 
-- `model_path`:The location of the AQuilt model with self-inspection-lora loaded can be used for evaluating data quality.
+- `model_path`:The location of the AQuilt model.
+- `eval_lora_path`: Self-inspection-lora can be used for evaluating data quality.
 - `data_path`:The location of the synthetic data obtained in the previous step.
 - `output_datapath`:The location of the dataset with evaluation results.
 
