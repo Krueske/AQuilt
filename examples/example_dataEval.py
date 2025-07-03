@@ -43,8 +43,6 @@ llm = LLM(model=model_path,tensor_parallel_size=1, max_model_len=8196, gpu_memor
 sampling_params = SamplingParams(temperature=0.1, top_p=0.95, max_tokens=1024)
 print("model prepared")
 
-input_file_name = sys.argv[1]
-
 data = [{
         "context": "In healthy individuals, blood pressure (BP) decreases, or \"dips\", during sleep. Ethnicity and high daytime blood pressure level are known markers of nondipping status. The literature on psychological markers of nondipping is scant but suggests that anger/hostility and chronic stress may be contributors to nondipping.We have investigated this phenomenon in drug-free hypertensives who participated in a clinical trial and supplied extensive demographic, psychological, and biological risk factor data after medication washout prior to any treatment.Sixty-two patients were available for analysis (n = 30 nondippers). While most studies focus only on systolic BP nondipping, we explicitly studied both systolic and diastolic BP dipping as outcomes given that both have prognostic value.Hierarchical multiple regression revealed that predictor variables in total accounted for 38% of variance in systolic blood pressure dipping and 44% of variance in diastolic blood pressure dipping. A significant positive predictor was alcohol consumption (beta = 0.37, t = 2.8, p = 0.007) for systolic BP and beta = 0.43, t = 3.7, p = 0.001 for diastolic BP), and an anger diffusion preference was also a positive predictor (beta = 0.42, t = 2.7, p = 0.01) for systolic BP dipping. No measure of trait negative affect reached significance as a predictor for systolic or diastolic BP dipping.",
         "qa_pair": {
