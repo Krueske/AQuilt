@@ -5,6 +5,7 @@ import numpy as np
 import random
 import pandas as pd
 from vllm import LLM, SamplingParams
+from vllm.lora.request import LoRARequest
 import pyarrow.parquet as pq
 import sys
 def setup_seed(seed):
@@ -36,9 +37,10 @@ user_qe_prompt = """<text begin>
 <qa_pair end>"""
 
 model_path = sys.argv[1]
-judged_data_path = sys.argv[2]
-llm = LLM(model=model_path,tensor_parallel_size=1, max_model_len=8196, gpu_memory_utilization=0.9)
-sampling_params = SamplingParams(temperature=0.1, top_p=0.95, max_tokens=1024)
+lora_path = sys.argv[2]
+judged_data_path = sys.argv[3]
+llm = LLM(model=model_path,tensor_parallel_size=1, max_model_len=8196, gpu_memory_utilization=0.9, enable_lora=True)
+sampling_params = SamplingParams(temperature=0.1, top_p=0.95, max_tokens=1024, lora_request=LoRARequest("aquilt_eval", 1, lora_path))
 print("model prepared")
 
 input_file_name = sys.argv[1]
