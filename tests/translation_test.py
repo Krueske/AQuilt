@@ -110,4 +110,4 @@ def translation_test(test_data_path, model, sampling_params, output_file):
 
 
 filename = model_path.split("/")[-1]
-translation_test("./translation/test/5_3.json", llm, sampling_params, f"./translation/results/{filename}.json")
+translation_test("./data/translation/test/5_3.json", llm, sampling_params, f"./data/translation/results/{filename}.json")
