@@ -24,6 +24,8 @@ python -u examples/example_dataEval.py "AQuilt_path" "AQuilt_Eval_lora_path" "ex
 ```
 Notes:
 - The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
+
+
 If you want to generate customized tasks, you can refer to the `example_dataGen_customTask.py` file for data synthesis.
 ```bash
 python -u examples/example_dataGen.py "AQuilt_path" "exampleGen_customTask.json"
