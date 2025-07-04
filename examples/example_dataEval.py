@@ -77,7 +77,7 @@ for output in outputs:
         quality_eval = json.loads(quality_eval)
         results_dict[num]["analysis_steps"] = quality_eval["analysis_steps"]
         results_dict[num]["score"] = quality_eval["score"]
-    except:
+    except json.JSONDecodeError:
         results_dict[num]["analysis_steps"] = f"something wrong:{generated_text}"
         results_dict[num]["score"] = f"something wrong:{generated_text}"
     num += 1
