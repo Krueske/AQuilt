@@ -2,7 +2,6 @@ import json
 from vllm import LLM, SamplingParams
 import re
 import sys
-# 加载 vllm 模型
 model_path = sys.argv[1]
 llm = LLM(model=model_path, tensor_parallel_size=1, max_model_len=8192, gpu_memory_utilization=0.9)
 sampling_params = SamplingParams(temperature=0, top_p=0.95, max_tokens=512)
@@ -48,7 +47,6 @@ def judge_answer(generated_answer, true_answer):
     return False
     
 
-# 计算准确率
 def calculate_accuracy(results):
     correct = 0
     for result in results:
@@ -56,14 +54,12 @@ def calculate_accuracy(results):
             correct += 1
     return correct / len(results)
 
-# 加载数据集
-with open('./PubMedQA/test/test_ground_truth.json', 'r', encoding="utf-8") as f:
+with open('./data/PubMedQA/test/test_ground_truth.json', 'r', encoding="utf-8") as f:
     test_ground_truth = json.load(f)
 
-with open('./PubMedQA/test/ori_pqal.json', 'r', encoding="utf-8") as f:
+with open('./data/PubMedQA/test/ori_pqal.json', 'r', encoding="utf-8") as f:
     ori_pqal = json.load(f)
 
-# 构建测试数据集
 test_dataset = []
 for pmid, label in test_ground_truth.items():
     if pmid in ori_pqal:
@@ -73,15 +69,11 @@ for pmid, label in test_ground_truth.items():
             'context': "".join(ori_pqal[pmid]['CONTEXTS'])
         })
 
-# 评估模型
 results = evaluate_model(llm, test_dataset, test_ground_truth)
 
-# 计算准确率
 accuracy = calculate_accuracy(results)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 
 model_name = model_path.split("/")[-1]
-# 保存结果
-with open(f'./PubMedQA/results/{model_name}.json', 'w', encoding='utf-8') as f:
+with open(f'./data/PubMedQA/results/{model_name}.json', 'w', encoding='utf-8') as f:
     json.dump(results, f, indent=4, ensure_ascii=False)
-    print("测试完成...")
