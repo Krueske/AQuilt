@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
 import numpy as np
 import random
@@ -11,14 +10,12 @@ import pyarrow.parquet as pq
 from tqdm import tqdm
 import re
 def setup_seed(seed):
-    random.seed(seed)   # Python的随机性
-    os.environ['PYTHONHASHSEED'] = str(seed)    # 设置Python哈希种子，为了禁止hash随机化，使得实验可复现
-    np.random.seed(seed)   # numpy的随机性
-    torch.manual_seed(seed)   # torch的CPU随机性，为CPU设置随机种子
-    torch.cuda.manual_seed(seed)   # torch的GPU随机性，为当前GPU设置随机种子
-    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.   torch的GPU随机性，为所有GPU设置随机种子
-    # torch.backends.cudnn.benchmark = False   # if benchmark=True, deterministic will be False
-    # torch.backends.cudnn.deterministic = True   # 选择确定性算法
+    random.seed(seed) 
+    os.environ['PYTHONHASHSEED'] = str(seed) 
+    np.random.seed(seed) 
+    torch.manual_seed(seed)  
+    torch.cuda.manual_seed(seed) 
+    torch.cuda.manual_seed_all(seed) 
 
 setup_seed(0)
 task_prompt_dict ={
@@ -82,24 +79,6 @@ And output in the following JSON format:
 {"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
 ```
 """,
-"data complexity evaluation": """Please score the complexity of the user's instruction to help students understand the complexity of the questions.
-There are 5 levels of complexity, which are: 1 point (Simple Question), 2 points (Basic Question), 3 points (Moderate Complexity Question), 4 points (Higher Complexity Question), 
-You'll first need to analyze the complexity of the question before grading it.
-And output in the following JSON format:
-```json
-{"analysis_steps": "xxx", "score": "xxx"}
-```
-""",
-"data quality evaluation": """Please score the quality of the user's instruction and response to help students understand the quality of the question and response.
-There are 5 levels of quality, which are: 1 point - Basic requirements met (Basic Level), 2 points - Basic requirements met with some quality (Qualified Level), \
-3 points - Good quality, meeting most requirements (Good Level), 4 points - High quality, meeting all requirements and exceeding expectations (Excellent Level), \
-5 points - Excellent quality, exceeding all requirements with professional contributions (Outstanding Level)
-You'll first need to analyze the quality of the question and response before grading it.
-And output in the following JSON format:
-```json
-{"analysis_steps": "xxx", "score": "xxx"}
-```
-""",
 "text summarization": """Please generate a concise summary Q&A pairs of the provided text to help students better understand the main points:
 The summary should capture the key ideas and essential information from the text.
 The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
@@ -132,6 +111,20 @@ And output in the following JSON format:
 {"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
 ```
 """,
+"extractive question answering": """Please generate an extractive question answering task based on the provided reference materials to help students better understand the main points:
+The content you generate should include a question, and you also need to generate the thinking steps for solving the question, as well as the answer to this question.
+And output in the following JSON format:
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"抽取式问答": """请根据提供的参考资料生成一个抽取式问答任务，以帮助学生更好地理解文章内容：
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
 "文本摘要": """请根据提供的文本生成一个合理的摘要问答对，摘要应捕捉文本中的关键思想和基本信息，以帮助学生更好地理解主要观点：
 你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
 并按照以下json格式输出
@@ -157,6 +150,20 @@ And output in the following JSON format:
 分类应准确且与给定的文本相关。
 你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
 并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"自然语言理解": """请根据提供的参考资料生成一个自然语言理解题(例如情感分析，语义分析，实体识别等)，以帮助学生更好地掌握相关知识：
+你生成的内容应该包括一个问题，同时你还需要生成解答问题的思考步骤，以及这个问题的答案。
+并按照以下json格式输出
+```json
+{"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
+```
+""",
+"natural language understanding": """Please generate a natural language understanding question (such as sentiment analysis, semantic analysis, entity recognition, etc.) based on the provided reference materials to help students better grasp the relevant knowledge:
+The content you generate should include a question, and you also need to provide the thinking steps to solve the question, as well as the answer to the question.
+Please output in the following JSON format:
 ```json
 {"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
 ```
