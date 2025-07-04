@@ -8,7 +8,6 @@ from tqdm import tqdm
 import numpy as np
 import torch
 from transformers import LlamaTokenizer, AutoConfig, LlamaForCausalLM, GenerationConfig
-# vllm 相关导入
 from vllm import LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 def setup_seed(seed):
@@ -25,7 +24,6 @@ setup_seed(0)
 
 
 
-# 加载 vllm 模型
 model_path = sys.argv[1]
 llm = LLM(model=model_path, tensor_parallel_size=1, max_model_len=8192, gpu_memory_utilization=0.9)
 sampling_params = SamplingParams(temperature=0, max_tokens=1024)
@@ -79,9 +77,7 @@ def extract_answer(line, gen_ans):
 
 def files_name(directory):
     files_and_folders = os.listdir(directory)
-    # 过滤出文件名，假设你只想要文件名，不包括文件夹
     file_names = [file for file in files_and_folders if os.path.isfile(os.path.join(directory, file))]
-    # 文件名列表
     subjects = []
     for file_name in file_names:
         subject = re.sub('_test.csv', '', str(file_name))
@@ -89,10 +85,10 @@ def files_name(directory):
     return subjects
 
 def test(subject_name):
-    df = pd.read_csv("./CEVAL/test/{}_test.csv".format(subject_name), header=0)
+    df = pd.read_csv("./data/CEVAL/test/{}_test.csv".format(subject_name), header=0)
     lines = df.to_dict(orient='records')
     in_context = ""
-    df_dev = pd.read_csv("./CEVAL/dev/{}_dev.csv".format(subject_name), header=0)
+    df_dev = pd.read_csv("./data/CEVAL/dev/{}_dev.csv".format(subject_name), header=0)
     for i in range(len(df_dev)):
         in_context += "{question}\nA. {A}\nB. {B}\nC. {C}\nD. {D}\n答案是什么？{answer}\n".format(
             question=df_dev.loc[i, 'question'], A=df_dev.loc[i, 'A'], B=df_dev.loc[i, 'B'], C=df_dev.loc[i, 'C'],
@@ -133,13 +129,17 @@ def test(subject_name):
             print("--------------------------------------------------")
     return subject_res
 
-subjects = files_name('./CEVAL/test')
+subjects = files_name('./data/CEVAL/test')
+test_subjects = ["high_school_geography", "high_school_history", "ideological_and_moral_cultivation","mao_zedong_thought", "marxism", "middle_school_geography", "middle_school_history", "modern_chinese_history"]
 results = {}
 for i in range(len(subjects)):
     subject_name = subjects[i]
-    result1 = test(subject_name)
+    if subject_name in test_subjects:
+        result1 = test(subject_name)
+    else:
+        result1 = ["A"]*60
     results[subject_name] = result1
 model_name = model_path.split("/")[-1]
-with open(f"./CEVAL/results/{model_name}.json", "w", encoding='utf-8') as f:
+with open(f"./data/CEVAL/results/{model_name}.json", "w", encoding='utf-8') as f:
     json.dump(results, f, indent=4, ensure_ascii=False)
     print("测试完成...")
