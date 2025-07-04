@@ -184,7 +184,7 @@ task_type = "single choice question answering"  # Change this to the desired tas
 results = []
 texts_with_prompts = []
 for i in range(len(unlabeled_data)):
-    texts_with_prompts.append(task_prompt_dict[task_type] + zh_prompt_template.format(text=unlabeled_data[i]))
+    texts_with_prompts.append(task_prompt_dict[task_type] + en_prompt_template.format(text=unlabeled_data[i]))
 
 for idx, output in enumerate(tqdm(outputs)):
     data_item = unlabeled_data[idx] # The original data item
