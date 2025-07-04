@@ -110,4 +110,4 @@ def openend_test(test_data_path, model, sampling_params, output_file):
     return rouge_l
 
 filename = model_path.split("/")[-1]
-openend_test("./openend/test/5_4.json", llm, sampling_params, f"./openend/results/{filename}.json")
+openend_test("./data/openend/test/5_4.json", llm, sampling_params, f"./data/openend/results/{filename}.json")
