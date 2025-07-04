@@ -35,7 +35,6 @@ sampling_params = SamplingParams(temperature=0, max_tokens=1024)
 def squadqa_test_wotext(test_data_path, model, sampling_params, output_path):
     print("squadqa_test_wotext")
     test_data = []
-    # 读取测试数据
     df = pd.read_csv(test_data_path,header=0)
     lines = df.to_dict(orient='records')
 
@@ -53,7 +52,6 @@ def squadqa_test_wotext(test_data_path, model, sampling_params, output_path):
             prompts.append(f"<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{instruction}{input_1}<|im_end|>\n<|im_start|>assistant\n")
         reference_answers.append(answers_json['text'])
     
-    # 生成结果
     outputs = model.generate(prompts, sampling_params)
     for output in outputs:
         try:
@@ -67,7 +65,6 @@ def squadqa_test_wotext(test_data_path, model, sampling_params, output_path):
         model_outputs.append(output_text.strip().lower())
     
 
-    # 保存输出和参考答案到文件
     result_data = []
     for ref, pred in zip(reference_answers, model_outputs):
         result_data.append({
@@ -77,7 +74,6 @@ def squadqa_test_wotext(test_data_path, model, sampling_params, output_path):
     with open(output_path, "w", encoding="utf-8") as output_file:
         json.dump(result_data, output_file, ensure_ascii=False, indent=4)
 
-    # 计算 f1 分数
     p = [{"id": str(i), "prediction_text": p} for i, p in enumerate(model_outputs)]
     r = [
          {"id": str(i), "answers": {"text": l, "answer_start": [0]}}
@@ -90,6 +86,6 @@ def squadqa_test_wotext(test_data_path, model, sampling_params, output_path):
 
 
 filename = model_path.split("/")[-1]
-test_data_path = "./SquadQA/test/squad_test.csv"
-squadqa_test_wotext(test_data_path, llm, sampling_params, f"./SquadQA/results/{filename}.json")
+test_data_path = "./data/SquadQA/test/squad_test.csv"
+squadqa_test_wotext(test_data_path, llm, sampling_params, f"./data/SquadQA/results/{filename}.json")
 
