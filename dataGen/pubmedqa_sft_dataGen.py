@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
 import numpy as np
 import random
@@ -10,14 +9,12 @@ from vllm import LLM, SamplingParams
 import pyarrow.parquet as pq
 from tqdm import tqdm
 def setup_seed(seed):
-    random.seed(seed)   # Python的随机性
-    os.environ['PYTHONHASHSEED'] = str(seed)    # 设置Python哈希种子，为了禁止hash随机化，使得实验可复现
-    np.random.seed(seed)   # numpy的随机性
-    torch.manual_seed(seed)   # torch的CPU随机性，为CPU设置随机种子
-    torch.cuda.manual_seed(seed)   # torch的GPU随机性，为当前GPU设置随机种子
-    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.   torch的GPU随机性，为所有GPU设置随机种子
-    # torch.backends.cudnn.benchmark = False   # if benchmark=True, deterministic will be False
-    # torch.backends.cudnn.deterministic = True   # 选择确定性算法
+    random.seed(seed) 
+    os.environ['PYTHONHASHSEED'] = str(seed) 
+    np.random.seed(seed)
+    torch.manual_seed(seed) 
+    torch.cuda.manual_seed(seed) 
+    torch.cuda.manual_seed_all(seed)
 
 setup_seed(2)
 
@@ -80,24 +77,6 @@ This Q&A pair should include a question, and you also need to generate the think
 And output in the following JSON format:
 ```json
 {"question": "xxx", "thinking_steps": "xxx", "answer": "xxx"}
-```
-""",
-"data complexity evaluation": """Please score the complexity of the user's instruction to help students understand the complexity of the questions.
-There are 5 levels of complexity, which are: 1 point (Simple Question), 2 points (Basic Question), 3 points (Moderate Complexity Question), 4 points (Higher Complexity Question), 
-You'll first need to analyze the complexity of the question before grading it.
-And output in the following JSON format:
-```json
-{"analysis_steps": "xxx", "score": "xxx"}
-```
-""",
-"data quality evaluation": """Please score the quality of the user's instruction and response to help students understand the quality of the question and response.
-There are 5 levels of quality, which are: 1 point - Basic requirements met (Basic Level), 2 points - Basic requirements met with some quality (Qualified Level), \
-3 points - Good quality, meeting most requirements (Good Level), 4 points - High quality, meeting all requirements and exceeding expectations (Excellent Level), \
-5 points - Excellent quality, exceeding all requirements with professional contributions (Outstanding Level)
-You'll first need to analyze the quality of the question and response before grading it.
-And output in the following JSON format:
-```json
-{"analysis_steps": "xxx", "score": "xxx"}
 ```
 """,
 "text summarization": """Please generate a concise summary Q&A pairs of the provided text to help students better understand the main points:
