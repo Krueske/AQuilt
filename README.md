@@ -139,3 +139,7 @@ Options:
 
 - `model_path`: The location of the models that need to be evaluated.
 - `domain_task`: The type of domain task that needs to be evaluated， your choices include ("ceval","pubmedqa","squadqa","translation","openend").
+
+Notes:
+
+- For the CEVAL Task, you need to upload the output results to the [CEVAL official website](https://cevalbenchmark.com/index.html) to obtain the test scores, and calculate the average value of the 8 subjects we evaluated (covering 6 different domains).
