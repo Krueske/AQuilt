@@ -142,4 +142,4 @@ Options:
 
 Notes:
 
-- For the CEVAL Task, you need to upload the output results to the [CEVAL official website](https://cevalbenchmark.com/index.html) to obtain the test scores, and calculate the average value of the 8 subjects we evaluated (covering 6 different domains).
+- For the CEVAL Task, you need to upload the output results to the [CEVAL official website](https://cevalbenchmark.com/index.html) to obtain the test scores, and calculate the average score of the 8 subjects we evaluated (covering 6 different domains).
