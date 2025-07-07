@@ -31,7 +31,7 @@ If you want to generate customized tasks, you can refer to the `example_dataGen_
 python -u examples/example_dataGen.py "AQuilt_path" "exampleGen_customTask.json"
 ```
 Notes:
-- Please note that the task types should be adjusted to: close question answering(闭卷问答) or open question answering(开卷问答)
+- Please note that the task types should be adjusted to: close question answering (闭卷问答) or open question answering (开卷问答).
 
 ## Experiment
 
@@ -49,8 +49,8 @@ CUDA_VISIBLE_DEVICES=0 python -u ./dataGen/$domain_task\_sft_dataGen.py $model_p
 
 Options:
 
-- `domain_task`:The type of domain task for which you need synthetic data. , your choices include ("ceval","pubmedqa","squadqa","translation","openend")
-- `model_path`:The location of the AQuilt model
+- `domain_task`:The type of domain task for which you need synthetic data. , your choices include ("ceval","pubmedqa","squadqa","translation","openend").
+- `model_path`:The location of the AQuilt model.
 - `unlabeled_data_path`:To use AQuilt for generating synthetic data based on unlabeled documents, you need to specify the location of the unlabeled documents in the corresponding domain.
 - `output_data_path`:The storage location for synthetic data.
 
