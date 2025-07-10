@@ -4,7 +4,7 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 <img src="images/main_figure.png" alt="Alt Text" style="zoom:50%;" width = "2000" />
 
-## 🔗AQuilt Download
+## 🔗Links
 
 You can download the AQuilt model after anonymity period from this link:[link]
 
