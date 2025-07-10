@@ -1,23 +1,20 @@
 import os
 import json
-# os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import torch
 import numpy as np
 import random
 import pandas as pd
 from vllm import LLM, SamplingParams
+from vllm.lora.request import LoRARequest
 import pyarrow.parquet as pq
 import sys
 def setup_seed(seed):
-    random.seed(seed)   # Python的随机性
-    os.environ['PYTHONHASHSEED'] = str(seed)    # 设置Python哈希种子，为了禁止hash随机化，使得实验可复现
-    np.random.seed(seed)   # numpy的随机性
-    torch.manual_seed(seed)   # torch的CPU随机性，为CPU设置随机种子
-    torch.cuda.manual_seed(seed)   # torch的GPU随机性，为当前GPU设置随机种子
-    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.   torch的GPU随机性，为所有GPU设置随机种子
-    torch.backends.cudnn.benchmark = False   # if benchmark=True, deterministic will be False
-    torch.backends.cudnn.deterministic = True   # 选择确定性算法
-
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed) 
+    np.random.seed(seed) 
+    torch.manual_seed(seed) 
+    torch.cuda.manual_seed(seed) 
+    torch.cuda.manual_seed_all(seed)  
 setup_seed(0)
 
 system_prompt = """Please score the quality of the user's instruction and response to help students understand the quality of the question and response based on the provided text.
@@ -37,17 +34,14 @@ user_qe_prompt = """<text begin>
 <qa_pair end>"""
 
 model_path = sys.argv[1]
-data_path = sys.argv[2]
-judged_data_path = sys.argv[3]
-llm = LLM(model=model_path,tensor_parallel_size=1, max_model_len=8196, gpu_memory_utilization=0.9)
+lora_path = sys.argv[2]
+data_path = sys.argv[3]
+judged_data_path = sys.argv[4]
+llm = LLM(model=model_path, tensor_parallel_size=1, max_model_len=8196, gpu_memory_utilization=0.9)
 print("model prepared")
-
-input_file_name = sys.argv[1]
 
 with open(data_path, "r", encoding="utf-8") as f:
     data = json.load(f)
-
-# data = data[0:10]
 
 results_dict = []
 ag_prompts = []
@@ -59,7 +53,7 @@ for i in range(len(data)):
 sampling_params = SamplingParams(temperature=0.0, top_p=0.95, max_tokens=1024)
 
 all_results = []
-outputs = llm.generate(ag_prompts, sampling_params)
+outputs = llm.generate(ag_prompts, sampling_params, lora_request=LoRARequest("aquilt_eval", 1, lora_path))
 num = 0
 for output in outputs:
     prompt = output.prompt
@@ -69,7 +63,7 @@ for output in outputs:
         quality_eval = json.loads(quality_eval)
         results_dict[num]["analysis_steps"] = quality_eval["analysis_steps"]
         results_dict[num]["score"] = quality_eval["score"]
-    except:
+    except json.JSONDecodeError as e:
         results_dict[num]["analysis_steps"] = f"something wrong:{generated_text}"
         results_dict[num]["score"] = f"something wrong:{generated_text}"
     num+=1
