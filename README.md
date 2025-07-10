@@ -99,7 +99,7 @@ JSON file with structured instructions:
 
 ## 👨‍💻Experiment
 
-### Data Synthesis
+### Domain Data Synthesis
 
 Use the `scripts/dataGen.sh` script to synthesis data, run the following script:
 
