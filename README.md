@@ -10,7 +10,7 @@ You can download the AQuilt model from this link: [AQuilt](https://huggingface.c
 
 You can download the AQuilt eval lora from this link: [AQuilt_eval_lora](https://huggingface.co/xiapk7/AQuilt_Eval_lora) , which is used for self-inspection.
 
-And we open-source the dataset used to train AQuilt: [AQuilt_Trainingset](https://huggingface.co/xiapk7/AQuilt_trainingset)
+And we open-source the dataset used to train AQuilt: [AQuilt_Trainingset](https://huggingface.co/datasets/xiapk7/AQuilt_trainingset)
 
 ## ⚙️Environment Setup
 
