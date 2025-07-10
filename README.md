@@ -1,4 +1,4 @@
-## 🧠AQuilt
+## AQuilt
 
 Overview of the proposed AQuilt framework. The left side illustrates the training process of our data synthesis model, while the right side demonstrates how the trained model automatically synthesizes high-quality domain-specific data.
 
@@ -8,7 +8,7 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 You can download the AQuilt model after anonymity period from this link:[link]
 
-⚙️## Environment Setup
+## ⚙️Environment Setup
 
 To install all the relevant packages, run the following:
 
@@ -16,7 +16,7 @@ To install all the relevant packages, run the following:
 conda create -n [environment_name] --file requirements.txt
 conda activate [environment_name]
 ```
-🚀## Quick Start
+## 🚀Quick Start
 You can directly refer to the `example_dataGen.py` file and the `example_dataEval.py` file for data synthesis and data evaluation:
 ```bash
 python -u examples/example_dataGen.py "AQuilt_path" "exampleGen.json"
