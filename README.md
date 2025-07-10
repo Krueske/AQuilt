@@ -51,7 +51,7 @@ Parameter Explanation:
 
 - `--task_type`: Target task type
 
-- `--task_prefix`: Custom prefix added to all generated instructions
+- `--task_prefix`: If you want to generate customized tasks, you can add `task_prefix` to fulfill your requirements.
 
 - `--num_gen_per_text`: Number of instructions to generate per input unlabeled data
 
