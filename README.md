@@ -35,58 +35,66 @@ CUDA_VISIBLE_DEVICES=0 python ./example_dataGen.py \
   --seed 42
 ```
 
-⚙️ Full Parameter List
+Parameter Explanation:
 
-Parameter Required Default Description
+- `--model_path`: Path to AQuilt model
 
---model_path Yes - Path to base model directory<br>(e.g., /data/kxp/AQuilt_v0411)
+- `--eval_lora_path`: Path to LoRA adapters for Self-Inspection when `--eval=true`
 
---eval_lora_path Conditional - Path to LoRA adapters for evaluation<br>Required when eval=true
+- `--eval`: Enable Self-Inspection mode (true/false)
 
---eval Yes - Enable evaluation mode (true/false)
+- `--input_file`: Text file containing raw unlabeled data
 
---input_file Yes - Text file containing raw input sentences
+- `--output_file`: JSON output file for generated instructions
 
---output_file Yes - JSON output file for generated instructions
+- `--task_type`: Target task type
 
---task_type Yes - Target task type<br>(e.g., "natural language inference", "question answering")
+- `--task_prefix`: Custom prefix added to all generated instructions
 
---task_prefix No Empty Custom prefix added to all generated instructions
+- `--num_gen_per_text`: Number of instructions to generate per input unlabeled data
 
---num_gen_per_text No 1 Instructions to generate per input line
+- `--temperature`: Creativity control
 
---temperature No 0.7 Creativity control (0.0-1.0)<br>Lower = more deterministic
+- `--top_p`: Nucleus sampling threshold
 
---top_p No 0.95 Nucleus sampling threshold (0.0-1.0)
-
---seed No 42 Random seed for reproducibility
+- `--seed`:Random seed for reproducibility
 
 📄 Input File Format (input.txt)
 
 Plain text file with one unprocessed sentence per line:
-
-A man is walking his dog in the park.
-Scientists discovered new marine species near hydrothermal vents.
-Electric vehicles require different infrastructure than combustion engines.
-Cloud computing enables remote data processing through virtualized resources.
-
+```txt
+Direct pressure applied on the inner ear cannot …… the other group.
+We evaluate the outcome vesicoureteral reflux (VUR) in …… respectively (p>0.05).
+Radio frequency ablation (RFA) has been used as a …… border of ablation.
+To investigate the rates of Staphylococcus aureus carriage …… was documented for 7 (50%).
+Lichen aureus is localized variant of persistent pigmented purpuric dermatitis that …… intraepithelial vessels.
+```
 
 💾 Output Format (output.json)
 
 Generates JSON file with structured instructions:
+```json
 [
   {
-  
-  },
+        "context": "Direct pressure applied on the inner ear cannot …… the other group.",
+        "task_type": "natural language inference",
+        "qa_pair": {
+            "question": "Does direct pressure applied on the inner ear during scuba diving induce hearing loss, based on the findings that perforating the eardrums of guinea pigs before diving resulted in no variation in auditory threshold and cochlear spontaneous activity, even during extreme diving conditions?Yes, no, or maybe?",
+            "thinking_steps": "1. Understand the Question: The question asks whether direct pressure on the inner ear during scuba diving causes hearing loss, based on experimental findings with guinea pigs. 2. Analyze the Text: The text describes an experiment where guinea pigs with perforated eardrums were subjected to diving conditions, including extreme depths and durations. No changes in auditory threshold or cochlear spontaneous activity were observed in this group. 3. Logical Reasoning: Since the experiment did not observe any hearing loss or changes in auditory function in the group with perforated eardrums, it suggests that direct pressure on the inner ear does not induce hearing loss. 4. Choose the Best Answer: The text supports the conclusion that direct pressure on the inner ear does not induce hearing loss, as evidenced by the lack of variation in auditory parameters in the experimental group.",
+            "answer": "No"
+        },
+        "analysis_steps": "1. The question is clear and specific, asking whether direct pressure on the inner ear during scuba diving induces hearing loss based on experimental findings. 2. The response is relevant and directly addresses the question by referencing the experimental findings with guinea pigs. 3. The response provides a logical reasoning process, explaining how the lack of observed changes in auditory parameters supports the conclusion that direct pressure does not induce hearing loss. 4. The grammar and expression in the response are fluent and clear, with no spelling errors. 5. The response provides a comprehensive solution by not only answering the question but also explaining the reasoning behind the conclusion, which helps the user understand the context and implications of the findings.",
+        "score": 4
+    },
   ...
 ]
-
+```
 
 ⚠️ Important Notes
 
-- 1. When using eval=true, you must provide eval_lora_path
-- 2. The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
-- 3. If you want to generate customized tasks (add `task_prefix`), it is recommended that the task types be adjusted to close question answering or open question answering.
+- When using eval=true, you must provide eval_lora_path
+- The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
+- If you want to generate customized tasks (add `task_prefix`), it is recommended that the task types be adjusted to close question answering or open question answering.
 
 ## 👨‍💻Experiment
 
