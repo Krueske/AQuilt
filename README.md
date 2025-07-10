@@ -31,7 +31,7 @@ If you want to generate customized tasks, you can refer to the `example_dataGen_
 python -u examples/example_dataGen.py "AQuilt_path" "exampleGen_customTask.json"
 ```
 Notes:
-- Please note that the task types should be adjusted to: close question answering (闭卷问答) or open question answering (开卷问答).
+- Please note that the task types should be adjusted to: close question answering or open question answering.
 
 ## 👨‍💻Experiment
 
