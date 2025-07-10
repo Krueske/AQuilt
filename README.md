@@ -35,7 +35,7 @@ Notes:
 
 ## 👨‍💻Experiment
 
-## Data Synthesis
+### Data Synthesis
 
 Use the `dataGen.sh` script to synthesis data, run the following script:
 
@@ -54,7 +54,7 @@ Options:
 - `unlabeled_data_path`:To use AQuilt for generating synthetic data based on unlabeled documents, you need to specify the location of the unlabeled documents in the corresponding domain.
 - `output_data_path`:The storage location for synthetic data.
 
-## Synthetic Data Inspection
+### Synthetic Data Inspection
 
 Use the `dataEval.sh` script to evaluate data, run the following script:
 
@@ -86,7 +86,7 @@ Options:
 - `judged_data_path`:The location of the dataset with evaluation results obtained in the previous step.
 - `train_data_path`:The location of the dataset processed for training.
 
-## Training
+### Training
 
 Use the `train_llama3.sh` to train the downstream model:
 
@@ -125,7 +125,7 @@ Notes:
 }
 ```
 
-## Evaluation
+### Evaluation
 
 Use the `eval.sh` to evaluate the model on target datasets:
 
