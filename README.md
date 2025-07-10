@@ -37,14 +37,14 @@ Notes:
 
 ### Data Synthesis
 
-Use the `dataGen.sh` script to synthesis data, run the following script:
+Use the `scripts/dataGen.sh` script to synthesis data, run the following script:
 
 ```bash
 domain_task=""
 model_path=""
 unlabeled_data_path=""
 output_data_path=""
-CUDA_VISIBLE_DEVICES=0 python -u ./dataGen/$domain_task\_sft_dataGen.py $model_path $unlabeled_data_path $outoput_data_path > ./logs/data_gen.log 2>&1 &
+CUDA_VISIBLE_DEVICES=0 python -u ../dataGen/$domain_task\_sft_dataGen.py $model_path $unlabeled_data_path $outoput_data_path > ./logs/data_gen.log 2>&1 &
 ```
 
 Options:
@@ -56,7 +56,7 @@ Options:
 
 ### Synthetic Data Inspection
 
-Use the `dataEval.sh` script to evaluate data, run the following script:
+Use the `scripts/dataEval.sh` script to evaluate data, run the following script:
 
 ```bash
 model_path=""
@@ -73,7 +73,7 @@ Options:
 - `data_path`:The location of the synthetic data obtained in the previous step.
 - `output_datapath`:The location of the dataset with evaluation results.
 
-Then use `process_data.sh` to filter the synthetic data:
+Then use `scripts/process_data.sh` to filter the synthetic data:
 
 ```bash
 judged_data_path=""
@@ -88,7 +88,7 @@ Options:
 
 ### Training
 
-Use the `train_llama3.sh` to train the downstream model:
+Use the `scripts/train_llama3.sh` to train the downstream model:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 llamafactory-cli train LLaMA-Factory/llama3_lora_sft1.yaml
@@ -127,7 +127,7 @@ Notes:
 
 ### Evaluation
 
-Use the `eval.sh` to evaluate the model on target datasets:
+Use the `scripts/eval.sh` to evaluate the model on target datasets:
 
 ```bash
 model_path=""
