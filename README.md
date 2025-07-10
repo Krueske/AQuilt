@@ -6,7 +6,7 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 ## 🔗Links
 
-You can download the AQuilt model from this link: [https://huggingface.co/xiapk7/AQuilt](https://huggingface.co/xiapk7/AQuilt)
+You can download the AQuilt model from this link: [AQuilt](https://huggingface.co/xiapk7/AQuilt)
 
 ## ⚙️Environment Setup
 
