@@ -17,13 +17,11 @@ conda create -n [environment_name] --file requirements.txt
 conda activate [environment_name]
 ```
 ## 🚀Basic Usage
-Instruction Data Generation Script
-
-This script generates synthetic instruction data from unlabeled text using AQuilt. Below is a guide to using the data generation pipeline:
+You can use the following script to generate synthetic instruction data from unlabeled text.
 ```bash
-CUDA_VISIBLE_DEVICES=0 python ./example_dataGen.py \
-  --model_path /data/kxp/AQuilt_v0411 \
-  --eval_lora_path /data/kxp/LLaMA-Factory/saves/AQuilt_v0411_with_eval/lora/sft \
+CUDA_VISIBLE_DEVICES=0 python ./dataGen.py \
+  --model_path /path/to/AQuilt \
+  --eval_lora_path /path/to/AQuilt_eval_lora \
   --eval true \
   --input_file input.txt \
   --output_file output.json \
@@ -61,7 +59,7 @@ Parameter Explanation:
 
 📄 Input File Format (input.txt)
 
-Plain text file with one unprocessed sentence per line:
+Plain text file with one unlabeled text per line:
 ```txt
 Direct pressure applied on the inner ear cannot …… the other group.
 We evaluate the outcome vesicoureteral reflux (VUR) in …… respectively (p>0.05).
