@@ -95,7 +95,7 @@ JSON file with structured instructions:
 
 - When using `eval=true`, you must provide `eval_lora_path`
 - The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
-- If you want to generate customized tasks (by adding `task_prefix`), it is recommended that the task types be adjusted to close question answering or open question answering.
+- If you want to generate customized tasks (by adding `task_prefix`), it is recommended that the task types be adjusted to `close question answering` or `open question answering`.
 
 ## 👨‍💻Experiment
 
