@@ -11,7 +11,6 @@ results_score2 = []
 results_score3 = []
 results_score4 = []
 results_score5 = []
-# 遍历文件夹中的所有文件
 if "judged" in file_path:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
