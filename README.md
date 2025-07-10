@@ -7,6 +7,8 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 ## 🔗Links
 
 You can download the AQuilt model from this link: [AQuilt](https://huggingface.co/xiapk7/AQuilt)
+You can download the AQuilt eval lora from this link: [AQuilt_eval_lora](https://huggingface.co/xiapk7/AQuilt_eval_lora) , which is used for self-inspection.
+And we open-source the dataset used to train AQuilt: [AQuilt_Trainingset](https://huggingface.co/xiapk7/AQuilt_trainingset)
 
 ## ⚙️Environment Setup
 
@@ -89,7 +91,7 @@ JSON file with structured instructions:
 
 ⚠️ Important Notes
 
-- When using eval=true, you must provide eval_lora_path
+- When using `eval=true`, you must provide `eval_lora_path`
 - The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
 - If you want to generate customized tasks (by adding `task_prefix`), it is recommended that the task types be adjusted to close question answering or open question answering.
 
