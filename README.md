@@ -16,22 +16,77 @@ To install all the relevant packages, run the following:
 conda create -n [environment_name] --file requirements.txt
 conda activate [environment_name]
 ```
-## 🚀Quick Start
-You can directly refer to the `example_dataGen.py` file and the `example_dataEval.py` file for data synthesis and data evaluation:
+## 🚀Basic Usage
+Instruction Data Generation Script
+
+This script generates synthetic instruction data from unlabeled text using AQuilt. Below is a guide to using the data generation pipeline:
 ```bash
-python -u examples/example_dataGen.py "AQuilt_path" "exampleGen.json"
-python -u examples/example_dataEval.py "AQuilt_path" "AQuilt_Eval_lora_path" "exampleEval.json"
+CUDA_VISIBLE_DEVICES=0 python ./example_dataGen.py \
+  --model_path /data/kxp/AQuilt_v0411 \
+  --eval_lora_path /data/kxp/LLaMA-Factory/saves/AQuilt_v0411_with_eval/lora/sft \
+  --eval true \
+  --input_file input.txt \
+  --output_file output.json \
+  --task_type "natural language inference" \
+  --task_predix "" \
+  --num_gen_per_text 1 \
+  --temperature 0.7 \
+  --top_p 0.95 \
+  --seed 42
 ```
-Notes:
-- The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
+
+⚙️ Full Parameter List
+
+Parameter Required Default Description
+
+--model_path Yes - Path to base model directory<br>(e.g., /data/kxp/AQuilt_v0411)
+
+--eval_lora_path Conditional - Path to LoRA adapters for evaluation<br>Required when eval=true
+
+--eval Yes - Enable evaluation mode (true/false)
+
+--input_file Yes - Text file containing raw input sentences
+
+--output_file Yes - JSON output file for generated instructions
+
+--task_type Yes - Target task type<br>(e.g., "natural language inference", "question answering")
+
+--task_prefix No Empty Custom prefix added to all generated instructions
+
+--num_gen_per_text No 1 Instructions to generate per input line
+
+--temperature No 0.7 Creativity control (0.0-1.0)<br>Lower = more deterministic
+
+--top_p No 0.95 Nucleus sampling threshold (0.0-1.0)
+
+--seed No 42 Random seed for reproducibility
+
+📄 Input File Format (input.txt)
+
+Plain text file with one unprocessed sentence per line:
+
+A man is walking his dog in the park.
+Scientists discovered new marine species near hydrothermal vents.
+Electric vehicles require different infrastructure than combustion engines.
+Cloud computing enables remote data processing through virtualized resources.
 
 
-If you want to generate customized tasks, you can refer to the `example_dataGen_customTask.py` file for data synthesis.
-```bash
-python -u examples/example_dataGen.py "AQuilt_path" "exampleGen_customTask.json"
-```
-Notes:
-- Please note that the task types should be adjusted to: close question answering or open question answering.
+💾 Output Format (output.json)
+
+Generates JSON file with structured instructions:
+[
+  {
+  
+  },
+  ...
+]
+
+
+⚠️ Important Notes
+
+- 1. When using eval=true, you must provide eval_lora_path
+- 2. The types of tasks you can choose include: `single choice question answering`, `multi choice question answering`, `close question answering`, `open question answering`, `text summarization`, `text generation`, `natural language inference`, `text classification`, `extractive question answering`, `natural language understanding`, as well as their corresponding Chinese versions.
+- 3. If you want to generate customized tasks (add `task_prefix`), it is recommended that the task types be adjusted to close question answering or open question answering.
 
 ## 👨‍💻Experiment
 
