@@ -223,7 +223,7 @@ def parse_arguments():
                                                 '自然语言理解', 'natural language understanding'], default='close question answering', help='Task type')
     parser.add_argument('--seed', type=int, default=0, help='Random seed')
     parser.add_argument('--eval', type=bool, default=True, help='Whether to perform self-inspection')
-    parser.add_argument('--task_predix', type=str, default="", help='Task prefix for the task type')
+    parser.add_argument('--task_prefix', type=str, default="", help='Task prefix for the task type')
     parser.add_argument('--temperature', type=float, default=0.7, help='Sampling temperature')
     parser.add_argument('--top_p', type=float, default=0.95, help='Top-p sampling parameter')
     parser.add_argument('--num_gen_per_text', type=int, default=1, help='Number of qa_pairs to generate per text')
@@ -261,8 +261,8 @@ def main():
     language = is_chinese_or_english(args.task_type)
     prompt_template = zh_prompt_template if language == 'zh' else en_prompt_template
     task_prompt = task_prompt_dict[args.task_type]
-    if args.task_predix:
-        task_define = "```json\n{\"question\": \"" + args.task_predix
+    if args.task_prefix:
+        task_define = "```json\n{\"question\": \"" + args.task_prefix
     else:
         task_define = ""
     # change texts to prompts
