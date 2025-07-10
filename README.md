@@ -1,4 +1,4 @@
-🧠## AQuilt
+## 🧠AQuilt
 
 Overview of the proposed AQuilt framework. The left side illustrates the training process of our data synthesis model, while the right side demonstrates how the trained model automatically synthesizes high-quality domain-specific data.
 
