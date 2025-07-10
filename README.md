@@ -70,7 +70,7 @@ Lichen aureus is localized variant of persistent pigmented purpuric dermatitis t
 
 💾 Output Format (output.json)
 
-Generates JSON file with structured instructions:
+JSON file with structured instructions:
 ```json
 [
   {
@@ -84,7 +84,6 @@ Generates JSON file with structured instructions:
         "analysis_steps": "1. The question is clear and specific, asking whether direct pressure on the inner ear during scuba diving induces hearing loss based on experimental findings. 2. The response is relevant and directly addresses the question by referencing the experimental findings with guinea pigs. 3. The response provides a logical reasoning process, explaining how the lack of observed changes in auditory parameters supports the conclusion that direct pressure does not induce hearing loss. 4. The grammar and expression in the response are fluent and clear, with no spelling errors. 5. The response provides a comprehensive solution by not only answering the question but also explaining the reasoning behind the conclusion, which helps the user understand the context and implications of the findings.",
         "score": 4
     },
-  ……
 ]
 ```
 
