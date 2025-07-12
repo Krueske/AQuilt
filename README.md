@@ -30,6 +30,7 @@ CUDA_VISIBLE_DEVICES=0 python ./dataGen.py \
   --input_file input.txt \
   --output_file output.json \
   --task_type "natural language inference" \
+  --language "en" \
   --task_predix "" \
   --num_gen_per_text 1 \
   --temperature 0.7 \
@@ -50,6 +51,8 @@ Parameter Explanation:
 - `--output_file`: JSON output file for generated instructions
 
 - `--task_type`: Target task type
+
+- `--language`: Task language (en/zh)
 
 - `--task_prefix`: If you want to generate customized tasks, you can add `task_prefix` to fulfill your requirements.
 
