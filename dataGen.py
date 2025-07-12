@@ -173,7 +173,30 @@ Please output in the following JSON format:
 """
 }
 
-# user-defined prompt templates for different languages
+task_type_dict = {
+    "单项选择问答": "single choice question answering",
+    "多项选择问答": "multi choice question answering",
+    "闭卷问答": "close question answering",
+    "开卷问答": "open question answering",
+    "文本摘要": "text summarization",
+    "文本生成": "text generation",
+    "自然语言推断": "natural language inference",
+    "文本分类": "text classification",
+    "抽取式问答": "extractive question answering",
+    "自然语言理解": "natural language understanding",
+    "single choice question answering": "单项选择问答",
+    "multi choice question answering": "多项选择问答",
+    "close question answering": "闭卷问答",
+    "open question answering": "开卷问答",
+    "text summarization": "文本摘要",
+    "text generation": "文本生成",
+    "natural language inference": "自然语言推断",
+    "text classification": "文本分类",
+    "extractive question answering": "抽取式问答",
+    "natural language understanding": "自然语言理解"
+}
+
+# user prompt templates for different languages
 zh_prompt_template = """以下是给定的参考资料：
 [参考资料开始]
 {text}
@@ -221,9 +244,10 @@ def parse_arguments():
                                                 'close question answering', 'open question answering', 'text summarization', 'text generation', 'natural language inference',
                                                 'text classification', '文本摘要', '文本生成', '自然语言推断', '文本分类', '抽取式问答', 'extractive question answering',
                                                 '自然语言理解', 'natural language understanding'], default='close question answering', help='Task type')
+    parser.add_argument('--language', type=str, default="en", help='Task language')
     parser.add_argument('--seed', type=int, default=0, help='Random seed')
     parser.add_argument('--eval', type=bool, default=True, help='Whether to perform self-inspection')
-    parser.add_argument('--task_prefix', type=str, default="", help='Task prefix for the task type')
+    parser.add_argument('--task_predix', type=str, default="", help='Task prefix for the task type')
     parser.add_argument('--temperature', type=float, default=0.7, help='Sampling temperature')
     parser.add_argument('--top_p', type=float, default=0.95, help='Top-p sampling parameter')
     parser.add_argument('--num_gen_per_text', type=int, default=1, help='Number of qa_pairs to generate per text')
@@ -258,11 +282,14 @@ def main():
     sampling_params = SamplingParams(temperature=args.temperature, top_p=args.top_p, max_tokens=1024, n=args.num_gen_per_text)
     
     # choose prompt template based on task type
-    language = is_chinese_or_english(args.task_type)
-    prompt_template = zh_prompt_template if language == 'zh' else en_prompt_template
-    task_prompt = task_prompt_dict[args.task_type]
-    if args.task_prefix:
-        task_define = "```json\n{\"question\": \"" + args.task_prefix
+    task_type = args.task_type
+    task_type_language = is_chinese_or_english(task_type)
+    if task_type_language == "en" and args.language == "zh":
+        task_type = task_type_dict[task_type]
+    prompt_template = zh_prompt_template if args.language == 'zh' else en_prompt_template
+    task_prompt = task_prompt_dict[task_type]
+    if args.task_predix:
+        task_define = "```json\n{\"question\": \"" + args.task_predix
     else:
         task_define = ""
     # change texts to prompts
