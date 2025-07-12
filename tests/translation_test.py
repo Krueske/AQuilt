@@ -82,7 +82,7 @@ def translation_test(test_data_path, model, sampling_params, output_file):
         answer = data["answer"]
         
         if "llama" in model_path.lower():
-            prompts.append(f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{instruction}{input_1}\n请直接输出翻译结果。<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n")
+            prompts.append(f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{instruction}{input_1}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n")
         elif "qwen" in model_path.lower():
             prompts.append(f"<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{instruction}{input_1}<|im_end|>\n<|im_start|>assistant\n")
         reference_answers.append(answer)
