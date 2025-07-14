@@ -211,3 +211,7 @@ Options:
 Notes:
 
 - For the CEVAL Task, you need to upload the output results to the [CEVAL official website](https://cevalbenchmark.com/index.html) to obtain the test scores, and calculate the average score of the 8 subjects we evaluated (covering 6 different domains).
+## 💡 Acknowledgments
+We extend our gratitude to the following resources that contributed to this work:
+- **Bonito**: This work references insights from [Bonito](https://github.com/BatsResearch/bonito).
+- **LLaMA Factory**: The training pipeline leverages [LLaMA Factory](https://github.com/hiyouga/LLaMA-Factory), which provided efficient implementation and infrastructure for model fine-tuning.
