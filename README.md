@@ -6,6 +6,8 @@ Overview of the proposed AQuilt framework. The left side illustrates the trainin
 
 ## 🔗Links
 
+Paper: [AQuilt: Weaving Logic and Self-Inspection into Low-Cost, High-Relevance Data Synthesis for Specialist LLMs](https://arxiv.org/abs/2507.18584)
+
 You can download the AQuilt model from this link: [AQuilt](https://huggingface.co/xiapk7/AQuilt)
 
 You can download the AQuilt eval lora from this link: [AQuilt_eval_lora](https://huggingface.co/xiapk7/AQuilt_Eval_lora) , which is used for self-inspection.
