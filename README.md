@@ -213,6 +213,21 @@ Options:
 Notes:
 
 - For the CEVAL Task, you need to upload the output results to the [CEVAL official website](https://cevalbenchmark.com/index.html) to obtain the test scores, and calculate the average score of the 8 subjects we evaluated (covering 6 different domains).
+
+## 📜 Citation
+If you find this work useful, please cite:
+```bash
+@misc{ke2025aquiltweavinglogicselfinspection,
+      title={AQuilt: Weaving Logic and Self-Inspection into Low-Cost, High-Relevance Data Synthesis for Specialist LLMs}, 
+      author={Xiaopeng Ke and Hexuan Deng and Xuebo Liu and Jun Rao and Zhenxi Song and Jun Yu and Min Zhang},
+      year={2025},
+      eprint={2507.18584},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2507.18584}, 
+}
+```
+
 ## 💡 Acknowledgments
 We extend our gratitude to the following resources that contributed to this work:
 - **Bonito**: This work references insights from [Bonito](https://github.com/BatsResearch/bonito).
